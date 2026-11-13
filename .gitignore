@@ -48,7 +48,7 @@ Vagrantfile
 #-------------------------
 # Temporary Files
 #-------------------------
-/writable/cache/*
+/writable//*
 !/writable/cache/index.html
 
 /writable/logs/*
@@ -116,7 +116,7 @@ _modules/*
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
-.phpintel
+.phpintelcache
 /api/
 
 # Visual Studio Code

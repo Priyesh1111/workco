@@ -1,15 +1,196 @@
-
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
+<style>
+    .invoice-page {
+        padding-bottom: 30px;
+    }
+
+    .invoice-paper {
+        background: #fff;
+        max-width: 1000px;
+        margin: auto;
+        padding: 45px;
+        border-radius: 10px;
+        box-shadow: 0 3px 18px rgba(0, 0, 0, 0.07);
+    }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .invoice-brand {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #243b53;
+    }
+
+    .invoice-status {
+        display: inline-block;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-draft {
+        background: #e9ecef;
+        color: #495057;
+    }
+
+    .status-sent {
+        background: #cfe2ff;
+        color: #084298;
+    }
+
+    .status-paid {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .section-heading {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+
+    .invoice-info p {
+        margin-bottom: 7px;
+        color: #495057;
+    }
+
+    .invoice-table {
+        margin-top: 15px;
+    }
+
+    .invoice-table thead th {
+        background: #243b53;
+        color: #fff;
+        padding: 14px 12px;
+        font-size: 13px;
+        border: none;
+    }
+
+    .invoice-table tbody td {
+        padding: 14px 12px;
+        vertical-align: middle;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        color: #495057;
+    }
+
+    .grand-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 17px 15px;
+        margin-top: 12px;
+        background: #243b53;
+        color: #fff;
+        border-radius: 6px;
+        font-size: 17px;
+    }
+
+    .invoice-notes {
+        padding: 18px;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+
+    .invoice-footer {
+        text-align: center;
+        margin-top: 55px;
+        padding-top: 20px;
+        border-top: 1px solid #dee2e6;
+        color: #64748b;
+    }
+
+    @media print {
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        body {
+            background: #fff !important;
+            min-width: 0 !important;
+        }
+
+        header,
+        aside,
+        footer,
+        nav,
+        .no-print {
+            display: none !important;
+        }
+
+        main {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .container-fluid {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .invoice-paper {
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .invoice-table thead th {
+            background: #243b53 !important;
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .grand-total {
+            background: #243b53 !important;
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .invoice-status {
+            border: 1px solid #999;
+        }
+
+        .invoice-table tr {
+            page-break-inside: avoid;
+        }
+    }
+</style>
 <div class="container-fluid invoice-page">
 
     <div class="d-flex justify-content-between align-items-center mb-4 no-print">
         <h3 class="mb-0">Invoice Details</h3>
         <div class="d-flex gap-2">
-            <button onclick="window.print()" class="btn btn-dark">
+                <a href="<?= site_url('invoices/pdf/' . $invoice['id'] . '?inline=1') ?>" target="_blank"
+                rel="noopener" class="btn btn-dark">
                 Print Invoice
-            </button>
+            </a>
+            <a href="<?= site_url('invoices/pdf/' . $invoice['id']) ?>" class="btn btn-primary">
+            Download PDF
+            </a>
             <a href="<?= site_url('invoices') ?>" class="btn btn-secondary">
                 Back
             </a>
@@ -22,7 +203,7 @@
         <div class="invoice-header">
             <div>
                 <h2 class="invoice-brand">INVOICE</h2>
-                <p class="text-muted mb-0">Invoice Management System</p>
+                <!-- <p class="text-muted mb-0">Invoice Management System</p> -->
             </div>
 
             <div class="text-end">
@@ -131,12 +312,12 @@
                     </strong>
                 </div>
 
-                <div class="total-row">
+                <!-- <div class="total-row">
                     <span>Discount</span>
                     <strong>
                         ₹<?= number_format((float) $invoice['discount'], 2) ?>
                     </strong>
-                </div>
+                </div> -->
 
                 <div class="total-row">
                     <span>Tax</span>
@@ -173,9 +354,8 @@
         <div class="no-print status-update mt-4">
             <hr>
 
-            <form method="post"
-                  action="<?= site_url('invoices/status/' . $invoice['id']) ?>"
-                  class="d-flex flex-wrap align-items-center gap-2">
+            <form method="post" action="<?= site_url('invoices/status/' . $invoice['id']) ?>"
+                class="d-flex flex-wrap align-items-center gap-2">
 
                 <?= csrf_field() ?>
 
@@ -184,9 +364,8 @@
                 </label>
 
                 <select name="status" class="form-select" style="max-width:180px">
-                    <?php foreach (['draft', 'sent', 'paid', 'cancelled'] as $status): ?>
-                        <option value="<?= esc($status) ?>"
-                            <?= $invoice['status'] === $status ? 'selected' : '' ?>>
+                    <?php foreach (['draft', 'due', 'sent', 'paid', 'cancelled'] as $status): ?>
+                        <option value="<?= esc($status) ?>" <?= $invoice['status'] === $status ? 'selected' : '' ?>>
                             <?= esc(ucfirst($status)) ?>
                         </option>
                     <?php endforeach; ?>
@@ -201,180 +380,5 @@
     </div>
 </div>
 
-<style>
-.invoice-page {
-    padding-bottom: 30px;
-}
-
-.invoice-paper {
-    background: #fff;
-    max-width: 1000px;
-    margin: auto;
-    padding: 45px;
-    border-radius: 10px;
-    box-shadow: 0 3px 18px rgba(0,0,0,0.07);
-}
-
-.invoice-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.invoice-brand {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #243b53;
-}
-
-.invoice-status {
-    display: inline-block;
-    padding: 6px 15px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.status-draft {
-    background: #e9ecef;
-    color: #495057;
-}
-
-.status-sent {
-    background: #cfe2ff;
-    color: #084298;
-}
-
-.status-paid {
-    background: #d1e7dd;
-    color: #0f5132;
-}
-
-.status-cancelled {
-    background: #f8d7da;
-    color: #842029;
-}
-
-.section-heading {
-    font-size: 12px;
-    font-weight: 700;
-    color: #64748b;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
-}
-
-.invoice-info p {
-    margin-bottom: 7px;
-    color: #495057;
-}
-
-.invoice-table {
-    margin-top: 15px;
-}
-
-.invoice-table thead th {
-    background: #243b53;
-    color: #fff;
-    padding: 14px 12px;
-    font-size: 13px;
-    border: none;
-}
-
-.invoice-table tbody td {
-    padding: 14px 12px;
-    vertical-align: middle;
-}
-
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 9px 0;
-    color: #495057;
-}
-
-.grand-total {
-    display: flex;
-    justify-content: space-between;
-    padding: 17px 15px;
-    margin-top: 12px;
-    background: #243b53;
-    color: #fff;
-    border-radius: 6px;
-    font-size: 17px;
-}
-
-.invoice-notes {
-    padding: 18px;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
-
-.invoice-footer {
-    text-align: center;
-    margin-top: 55px;
-    padding-top: 20px;
-    border-top: 1px solid #dee2e6;
-    color: #64748b;
-}
-
-@media print {
-    @page {
-        size: A4;
-        margin: 15mm;
-    }
-
-    body {
-        background: #fff !important;
-        min-width: 0 !important;
-    }
-
-    header, aside, footer, nav,
-    .no-print {
-        display: none !important;
-    }
-
-    main {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .container-fluid {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    .invoice-paper {
-        max-width: 100%;
-        padding: 0;
-        margin: 0;
-        box-shadow: none;
-        border-radius: 0;
-    }
-
-    .invoice-table thead th {
-        background: #243b53 !important;
-        color: white !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .grand-total {
-        background: #243b53 !important;
-        color: white !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .invoice-status {
-        border: 1px solid #999;
-    }
-
-    .invoice-table tr {
-        page-break-inside: avoid;
-    }
-}
-</style>
 
 <?= $this->endSection() ?>

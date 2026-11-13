@@ -93,15 +93,21 @@
             </li>
             <hr class="my-2">
             <li class="nav-item">
-                <a href="<?= site_url('products') ?>" class="nav-link">Products</a>
+                <a class="nav-link text-dark fw-medium" href="<?= site_url('products') ?>">
+                    Products
+                </a>
             </li>
             <hr class="my-2">
             <li class="nav-item">
-                <a href="<?= site_url('invoices') ?>" class="nav-link">Invoices</a>
+                <a class="nav-link text-dark fw-medium" href="<?= site_url('invoices') ?>">
+                    Invoices
+                </a>
             </li>
             <hr class="my-2">
             <li class="nav-item">
-                <a href="<?= site_url('settings') ?>" class="nav-link">Settings</a>
+                <a class="nav-link text-dark fw-medium" href="<?= site_url('settings') ?>">
+                    Settings
+                </a>
             </li>
         </ul>
     </aside>
@@ -109,21 +115,7 @@
     <!-- 3. Main Content Space -->
     <main class="app-main p-4">
 
-        <!-- Success message -->
-        <?php if ($success = session()->getFlashdata('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?= esc($success) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-
-        <!-- General error message -->
-        <?php if ($error = session()->getFlashdata('error')): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= esc($error) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
+       
 
         <!-- Dynamic View Content -->
         <?= $this->renderSection('content') ?>

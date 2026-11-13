@@ -1,4 +1,3 @@
-
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
@@ -46,7 +45,9 @@
                                 <td>₹<?= number_format((float) $invoice['grand_total'], 2) ?></td>
                                 <td>
                                     <a href="<?= site_url('invoices/view/' . $invoice['id']) ?>"
-                                       class="btn btn-sm btn-info">View</a>
+                                        class="btn btn-sm btn-info">View</a>
+                                         <a href="<?= site_url('invoices/pdf/' . $invoice['id']) ?>"
+        class="btn btn-sm btn-outline-primary">PDF</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

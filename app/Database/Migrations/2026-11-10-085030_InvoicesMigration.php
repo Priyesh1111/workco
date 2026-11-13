@@ -40,7 +40,7 @@ class InvoicesMigration extends Migration
             ],
             'status' => [
                 'type' => 'ENUM',
-                'constraint' => ['draft', 'sent', 'paid', 'cancelled'],
+                'constraint' => ['draft', 'due', 'sent', 'paid', 'cancelled'],
                 'default' => 'draft',
             ],
             'subtotal' => [
