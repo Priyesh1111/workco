@@ -6,6 +6,8 @@ use App\Models\InvoicesModel;
 use App\Models\InvoiceItemsModel;
 use App\Models\CustomersModel;
 use App\Models\ProductsModel;
+use App\Models\SettingsModel;
+use App\Libraries\PdfService;
 
 class InvoicesController extends BaseController
 {
@@ -13,14 +15,12 @@ class InvoicesController extends BaseController
     protected $items;
     protected $customers;
     protected $products;
-
     public function __construct()
     {
         $this->invoices = new InvoicesModel();
         $this->items = new InvoiceItemsModel();
         $this->customers = new CustomersModel();
         $this->products = new ProductsModel();
-
         helper(['form', 'url']);
     }
 
@@ -238,6 +238,67 @@ class InvoicesController extends BaseController
         ]);
     }
 
+        public function pdf(int $id)
+    {
+        $invoice = $this->invoices
+            ->where('user_id', $this->userId())
+            ->find($id);
+
+        if (!$invoice) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $customer = $this->customers
+            ->where('user_id', $this->userId())
+            ->withDeleted()
+            ->find($invoice['customer_id']);
+
+        $items = $this->items
+            ->where('invoice_id', $id)
+            ->orderBy('id', 'ASC')
+            ->findAll();
+
+        $settings = (new SettingsModel())
+            ->where('user_id', $this->userId())
+            ->first() ?? [];
+
+        $isOverdue = !in_array($invoice['status'], ['paid', 'cancelled'], true)
+            && $invoice['due_date'] < date('Y-m-d');
+
+        if (!class_exists(\Dompdf\Dompdf::class)) {
+            return redirect()->back()
+                ->with('error', 'PDF library missing. Run: composer require dompdf/dompdf');
+        }
+
+        $pdf = new PdfService();
+
+        try {
+            $binary = $pdf->render([
+                'invoice'   => $invoice,
+                'customer'  => $customer,
+                'items'     => $items,
+                'settings'  => $settings,
+                'isOverdue' => $isOverdue,
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'Invoice PDF failed: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('error', 'The PDF could not be generated. Please try again.');
+        }
+
+        $filename = $pdf->filename($invoice);
+
+        // ?inline=1 opens the PDF in the browser tab (used by the Print button).
+        if ($this->request->getGet('inline') === '1') {
+            return $this->response
+                ->setContentType('application/pdf')
+                ->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"')
+                ->setBody($binary);
+        }
+
+        return $this->response->download($filename, $binary, true);
+    }
     public function updateStatus(int $id)
     {
         $invoice = $this->invoices
@@ -249,7 +310,7 @@ class InvoicesController extends BaseController
         }
 
         $status = $this->request->getPost('status');
-        $allowed = ['draft', 'sent', 'paid', 'cancelled'];
+        $allowed = ['draft', 'due', 'sent', 'paid', 'cancelled'];
 
         if (!in_array($status, $allowed, true)) {
             return redirect()->back()

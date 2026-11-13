@@ -51,7 +51,7 @@
                                         </a>
 
                                         <!-- Delete with Confirmation -->
-                                        <form action="<?= base_url('customers/delete' . $customer['id']) ?>" method="post"
+                                        <form action="<?= base_url('customers/delete/' . $customer['id']) ?>" method="post"
                                             class="d-inline"
                                             onsubmit="return confirm('Are you sure you want to delete this customer?');">
                                             <?= csrf_field() ?>

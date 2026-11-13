@@ -1,14 +1,11 @@
 <?php
-
 namespace App\Controllers;
-
 use App\Controllers\BaseController;
 use App\Models\ProductsModel;
 
 class ProductsController extends BaseController
 {
     protected $products;
-
     public function __construct()
     {
         $this->products = new ProductsModel();
@@ -48,7 +45,6 @@ class ProductsController extends BaseController
 
         return view('products/index', $data);
     }
-
     public function new()
     {
         return view('products/create', [
@@ -59,16 +55,16 @@ class ProductsController extends BaseController
     public function create()
     {
         $data = [
-            'name'        => trim((string) $this->request->getPost('name')),
+            'name' => trim((string) $this->request->getPost('name')),
             'description' => trim((string) $this->request->getPost('description')),
-            'unit_price'  => $this->request->getPost('unit_price'),
+            'unit_price' => $this->request->getPost('unit_price'),
             'tax_percent' => $this->request->getPost('tax_percent'),
         ];
 
         $rules = [
-            'name'        => 'required|min_length[2]|max_length[100]',
+            'name' => 'required|min_length[2]|max_length[100]',
             'description' => 'permit_empty',
-            'unit_price'  => 'required|decimal|greater_than_equal_to[0]',
+            'unit_price' => 'required|decimal|greater_than_equal_to[0]',
             'tax_percent' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
         ];
 
@@ -99,16 +95,16 @@ class ProductsController extends BaseController
         $this->findOwnedProduct($id);
 
         $data = [
-            'name'        => trim((string) $this->request->getPost('name')),
+            'name' => trim((string) $this->request->getPost('name')),
             'description' => trim((string) $this->request->getPost('description')),
-            'unit_price'  => $this->request->getPost('unit_price'),
+            'unit_price' => $this->request->getPost('unit_price'),
             'tax_percent' => $this->request->getPost('tax_percent'),
         ];
 
         $rules = [
-            'name'        => 'required|min_length[2]|max_length[100]',
+            'name' => 'required|min_length[2]|max_length[100]',
             'description' => 'permit_empty',
-            'unit_price'  => 'required|decimal|greater_than_equal_to[0]',
+            'unit_price' => 'required|decimal|greater_than_equal_to[0]',
             'tax_percent' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
         ];
 

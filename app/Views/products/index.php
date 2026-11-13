@@ -1,5 +1,4 @@
 <?= $this->extend('layouts/main') ?>
-
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
@@ -8,7 +7,6 @@
             <h3>Products</h3>
             <p class="text-muted">Manage your product catalogue</p>
         </div>
-
         <a href="<?= site_url('products/new') ?>" class="btn btn-primary">
             + Add Product
         </a>
@@ -25,7 +23,7 @@
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
+                        <th>Id</th>
                         <th>Product Name</th>
                         <th>Description</th>
                         <th>Unit Price</th>
@@ -38,21 +36,29 @@
                     <?php if (!empty($products)): ?>
                         <?php foreach ($products as $index => $product): ?>
                             <tr>
-                                <td><?= $index + 1 ?></td>
-                                <td><?= esc($product['name']) ?></td>
-                                <td><?= esc($product['description'] ?? '') ?></td>
-                                <td>₹<?= number_format((float) $product['unit_price'], 2) ?></td>
-                                <td><?= esc($product['tax_percent']) ?>%</td>
                                 <td>
-                                    <a href="<?= site_url('products/edit/' . $product['id']) ?>"
-                                       class="btn btn-sm btn-warning">
+                                    <?= $index + 1 ?>
+                                </td>
+                                <td>
+                                    <?= esc($product['name']) ?>
+                                </td>
+                                <td>
+                                    <?= esc($product['description'] ?? '') ?>
+                                </td>
+                                <td>₹
+                                    <?= number_format((float) $product['unit_price'], 2) ?>
+                                </td>
+                                <td>
+                                    <?= esc($product['tax_percent']) ?>%
+                                </td>
+                                <td>
+                                    <a href="<?= site_url('products/edit/' . $product['id']) ?>" class="btn btn-sm btn-warning">
                                         Edit
                                     </a>
 
-                                    <form action="<?= site_url('products/delete/' . $product['id']) ?>"
-                                          method="post"
-                                          class="d-inline"
-                                          onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                    <form action="<?= site_url('products/delete/' . $product['id']) ?>" method="post"
+                                        class="d-inline"
+                                        onsubmit="return confirm('Are you sure you want to delete this product?');">
                                         <?= csrf_field() ?>
                                         <button type="submit" class="btn btn-sm btn-danger">
                                             Delete
